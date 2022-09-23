@@ -17,7 +17,7 @@ let num = 75,
 	sideHeightMult = 2,
 	frameSmooting = 50;
 
-var simplex = new SimplexNoise(seed);
+let simplex = new SimplexNoise(seed);
 let chunkSize = displaySize / num;
 let emergencyStop = false;
 let lastFrameSpeeds = [];
@@ -67,7 +67,7 @@ function draw() {
 		lastFrameSpeeds.reduce((partialSum, a) => partialSum + a, 0) / frameSmooting;
 
 	speedDisp.innerHTML = `
-		Speed: <br> 
+		Speed: <br>
 		${Math.round(smoothFrameTime * 100) / 100}ms <br>
 		${Math.round(1000 / smoothFrameTime)}fps <br>
 		`;
