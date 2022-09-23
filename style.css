@@ -1,0 +1,14 @@
+:root {
+	display: flex;
+	justify-content: center;
+	height: 100%;
+	align-items: center;
+	overflow: hidden;
+}
+canvas {
+	/* 	border: 1px black solid; */
+}
+
+code {
+	position: absolute;
+}
