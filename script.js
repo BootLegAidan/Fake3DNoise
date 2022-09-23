@@ -7,15 +7,16 @@ let c = document.getElementById("canvas"),
 
 let speedDisp = document.getElementById("speedDisp");
 
-let num = 75,
+let num = 70,
 	displaySize = 1000,
-	maxHeight = 100,
+	maxHeight = 150,
 	seed = "39875307",
-	smoothing = 40,
-	tickChange = 0.0125,
+	smoothing = 30,
+	tickChange = 0.01,
 	colorSmoothing = 1,
-	sideHeightMult = 2,
-	frameSmooting = 50;
+	sideHeightMult = 5,
+	frameSmooting = 50,
+	scroll = 0
 
 let simplex = new SimplexNoise(seed);
 let chunkSize = displaySize / num;
@@ -27,6 +28,8 @@ c.width = displaySize + displaySize / num;
 c.style.height = 100 + "vmin";
 c.style.width = 100 + "vmin";
 
+frameTime = 1;
+
 function draw() {
 	let curFrame = performance.now();
 
@@ -34,7 +37,7 @@ function draw() {
 	for (let i = 0; i < num; i++) {
 		for (let j = 0; j < num; j++) {
 			let height =
-				simplex.noise3D(i / smoothing, j / smoothing, (tick / 10) * tickChange) *
+				simplex.noise3D((i / smoothing), (j / smoothing) + (scroll * tick), (tick) * tickChange) *
 				maxHeight;
 
 			ctx.fillStyle = `hsl(${height / colorSmoothing},50%,50%)`;
@@ -54,9 +57,9 @@ function draw() {
 			);
 		}
 	}
-	let frameTime = performance.now() - curFrame;
+	frameTime = performance.now() - curFrame;
 
-	if (frameTime > 60) {
+	if (frameTime > 1000) {
 		emergencyStop = true;
 		console.log(`STOPPED (Took ${frameTime})`);
 	}
@@ -66,13 +69,16 @@ function draw() {
 	let smoothFrameTime =
 		lastFrameSpeeds.reduce((partialSum, a) => partialSum + a, 0) / frameSmooting;
 
+
 	speedDisp.innerHTML = `
 		Speed: <br>
 		${Math.round(smoothFrameTime * 100) / 100}ms <br>
 		${Math.round(1000 / smoothFrameTime)}fps <br>
+		${emergencyStop ? 'Process was paused (took ' + frameTime + 'ms to render). Click to unpause' : ''} <br>
 		`;
 	if (!emergencyStop) {
-		tick++;
+		frameTime = performance.now() - curFrame;
+		tick += 1
 		requestAnimationFrame(draw);
 	}
 }
@@ -80,4 +86,9 @@ function draw() {
 let tick = 0;
 draw();
 
+document.addEventListener('click', () => {
+	emergencyStop = false
+	console.log('Unpaused')
+	draw()
+})
 // let update = setInterval(draw,1000)
